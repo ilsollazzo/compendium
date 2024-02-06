@@ -25,7 +25,7 @@ return new class extends Migration {
             $table->boolean('is_accessible')->default(true);
             $table->boolean('is_available')->default(true);
             $table->boolean('is_published')->default(false);
-            $table->json('utils')->default('{}');
+            $table->json('utils')->nullable();
             $table->timestamps();
         });
 
