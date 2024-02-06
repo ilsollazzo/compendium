@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Author;
+use App\Models\WorkDescriptionAuthor;
+use App\Models\WorkDescription;
 use App\Models\ExternalReferenceType;
+use App\Models\Language;
 use App\Models\Work;
 use App\Models\WorkType;
 use Illuminate\Console\Command;
@@ -78,7 +80,7 @@ class ImportOldDb extends Command
             return $authors->unique();
         }, collect())->each(function ($author) {
             if ($author !== null) {
-                (new Author(['name' => $author]))->save();
+                (new WorkDescriptionAuthor(['name' => $author]))->save();
             }
         });
     }
@@ -106,9 +108,10 @@ class ImportOldDb extends Command
     {
         $externalReferenceTypes = ExternalReferenceType::pluck('id', 'slug')->toArray();
         $workTypes = WorkType::pluck('id', 'slug')->toArray();
-        $authors = Author::pluck('id', 'name')->toArray();
+        $authors = WorkDescriptionAuthor::pluck('id', 'name')->toArray();
+        $languages = Language::pluck('id', 'iso_639_1')->toArray();
 
-        DB::connection('old')->table('film')->select('*')->get()->each(function ($record) use ($workTypes, $authors, $externalReferenceTypes) {
+        DB::connection('old')->table('film')->select('*')->get()->each(function ($record) use ($workTypes, $authors, $externalReferenceTypes, $languages) {
             // Manages years in the form "YYYY - YYYY"
             if (count(explode(' - ', $record->anno)) == 2) {
                 list($record->anno, $record->{'anno-fine'}) = explode(' - ', $record->anno);
@@ -142,7 +145,6 @@ class ImportOldDb extends Command
                 'end_year'             => $record->{'anno-fine'} ?: null,
                 'contains_episodes'    => self::isTrue($record->episodi),
                 'length'               => $record->durata,
-                'description'          => $record->descrizione,
                 'is_description_ready' => self::isTrue($record->pronto),
                 'is_accessible'        => self::isTrue($record->pervenuto),
                 'is_available'         => self::isTrue($record->disponibile),
@@ -158,22 +160,22 @@ class ImportOldDb extends Command
 
             if ($record->titolo) {
                 $work->titles()->create([
-                    'title'             => $record->titolo,
-                    'language_iso_code' => 'it',
+                    'title'       => $record->titolo,
+                    'language_id' => $languages['it'],
                 ]);
             }
 
             if ($record->{'titolo-en'}) {
                 $work->titles()->create([
-                    'title'             => $record->{'titolo-en'},
-                    'language_iso_code' => 'en',
+                    'title'       => $record->{'titolo-en'},
+                    'language_id' => $languages['en'],
                 ]);
             }
 
             if ($record->{'titolo-orig'}) {
                 $work->titles()->create([
-                    'title'             => $record->{'titolo-orig'},
-                    'language_iso_code' => 'xx',
+                    'title'       => $record->{'titolo-orig'},
+                    'language_id' => $languages['xx'],
                 ]);
             }
 
@@ -193,8 +195,17 @@ class ImportOldDb extends Command
                 }
             }
 
-            if ($record->aut_descrizione) {
-                collect(explode(',', $record->aut_descrizione))->each(fn(string $author) => $work->description_authors()->attach($authors[trim($author)]));
+            if ($record->descrizione) {
+                $description = new WorkDescription([
+                    'work_id'     => $work->id,
+                    'language_id' => $languages['it'],
+                    'description' => $record->descrizione
+                ]);
+                $description->save();
+
+                if ($record->aut_descrizione) {
+                    collect(explode(',', $record->aut_descrizione))->each(fn(string $author) => $description->authors()->attach($authors[trim($author)]));
+                }
             }
         });
     }

@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lnk_works_authors', function (Blueprint $table) {
+        Schema::create('lnk_descriptions_authors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('work_id')->constrained('works');
-            $table->foreignId('author_id')->constrained('authors');
+            $table->foreignId('work_description_id')->constrained('work_descriptions');
+            $table->foreignId('work_description_author_id')->constrained('work_description_authors');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lnk_works_authors');
+        Schema::dropIfExists('lnk_descriptions_authors');
     }
 };

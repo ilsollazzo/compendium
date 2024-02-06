@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\ExternalReferenceType;
+use App\Models\Language;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,6 +14,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->seedExternalReferenceTypes();
+        $this->seedLanguages();
     }
 
     private function seedExternalReferenceTypes(): void
@@ -47,5 +49,20 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Netflix',
             ],
         ])->each(fn(array $externalReferenceType) => (new ExternalReferenceType($externalReferenceType))->save());
+    }
+
+    private function seedLanguages(): void
+    {
+        collect([
+            [
+                'iso_639_1' => 'xx',
+            ],
+            [
+                'iso_639_1' => 'en',
+            ],
+            [
+                'iso_639_1' => 'it',
+            ],
+        ])->each(fn(array $language) => (new Language($language))->save());
     }
 }

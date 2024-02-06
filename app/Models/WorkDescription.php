@@ -4,19 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-/**
- * App\Models\Title
- *
- * @property-read \App\Models\Work $work
- * @method static \Illuminate\Database\Eloquent\Builder|WorkTitle newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|WorkTitle newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|WorkTitle query()
- * @mixin \Eloquent
- */
-class WorkTitle extends Model
+class WorkDescription extends Model
 {
     protected $guarded = ['id'];
+
     public function work(): BelongsTo
     {
         return $this->belongsTo(Work::class);
@@ -25,5 +18,10 @@ class WorkTitle extends Model
     public function language(): BelongsTo
     {
         return $this->belongsTo(Language::class);
+    }
+
+    public function authors(): BelongsToMany
+    {
+        return $this->belongsToMany(WorkDescriptionAuthor::class, 'lnk_descriptions_authors');
     }
 }

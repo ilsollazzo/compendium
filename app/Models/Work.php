@@ -39,13 +39,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereUtils($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereWorkTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereYear($value)
- * @property-read \App\Models\Author $author
+ * @property-read \App\Models\WorkDescriptionAuthor $author
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ExternalReference> $external_references
  * @property-read int|null $external_references_count
  * @property-read \App\Models\WorkType $workType
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Author> $description_authors
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkDescriptionAuthor> $description_authors
  * @property-read int|null $description_authors_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkTitle> $titles
  * @property-read int|null $titles_count
@@ -66,9 +66,9 @@ class Work extends Model
         return $this->hasMany(WorkTitle::class);
     }
 
-    public function description_authors(): BelongsToMany
+    public function descriptions(): HasMany
     {
-        return $this->belongsToMany(Author::class, 'lnk_works_authors');
+        return $this->hasMany(WorkDescription::class);
     }
 
     public function external_references(): HasMany
