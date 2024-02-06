@@ -1,4 +1,4 @@
-# The Compendium
+# The Disney Compendium
 
 This is a project to rebuild the [Disney Compendium](https://www.ilsollazzo.com/c/disney) from scratch.
 
@@ -14,7 +14,7 @@ support Docker.
 After cloning the project, you simply need to install the libraries via [composer](https://getcomposer.org/).
 
 ```shell
-git clone https://github.com/ilsollazzo/compendium.git
+git clone https://github.com/ilsollazzo/disney_compendium.git
 cd compendium
 composer install
 ```
