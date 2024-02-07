@@ -19,7 +19,6 @@ return new class extends Migration {
             $table->integer('end_year')->nullable();
             $table->integer('end_date')->nullable();
             $table->integer('duration')->nullable();
-            $table->text('description')->nullable();
             $table->boolean('contains_episodes')->default(false);
             $table->boolean('is_description_ready')->default(false);
             $table->boolean('is_accessible')->default(true);
