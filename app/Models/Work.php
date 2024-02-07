@@ -75,4 +75,9 @@ class Work extends Model
     {
         return $this->hasMany(ExternalReference::class);
     }
+
+    public function studios(): BelongsToMany
+    {
+        return $this->belongsToMany(Studio::class, 'lnk_works_studios');
+    }
 }

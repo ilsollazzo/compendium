@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Studio;
 use App\Models\WorkDescriptionAuthor;
 use App\Models\WorkDescription;
 use App\Models\ExternalReferenceType;
@@ -40,6 +41,7 @@ class ImportOldDb extends Command
         $this->cleanupOldDb();
         $this->importAuthors();
         $this->importWorkTypes();
+        $this->importStudios();
         $this->importWorks();
     }
 
@@ -88,7 +90,7 @@ class ImportOldDb extends Command
     /**
      * Imports the work types table from the old database
      */
-    private function importWorkTypes()
+    private function importWorkTypes(): void
     {
         DB::connection('old')->table('film')->select(['type'])->distinct()->get()->each(function (object $record) {
             if (trim($record->type)) {
@@ -97,6 +99,19 @@ class ImportOldDb extends Command
                     'slug' => Str::lower($record->type),
                 ]))->save();
             }
+        });
+    }
+
+    /**
+     * Imports the studios from the old database
+     */
+    private function importStudios(): void
+    {
+        DB::connection('old')->table('studios')->get()->each(function (object $record) {
+            (new Studio([
+                'name' => $record->nome,
+                'slug' => $record->id,
+            ]))->save();
         });
     }
 
@@ -110,8 +125,9 @@ class ImportOldDb extends Command
         $workTypes = WorkType::pluck('id', 'slug')->toArray();
         $authors = WorkDescriptionAuthor::pluck('id', 'name')->toArray();
         $languages = Language::pluck('id', 'iso_639_1')->toArray();
+        $studios = Studio::pluck('id', 'slug')->toArray();
 
-        DB::connection('old')->table('film')->select('*')->get()->each(function ($record) use ($workTypes, $authors, $externalReferenceTypes, $languages) {
+        DB::connection('old')->table('film')->select('*')->get()->each(function ($record) use ($studios, $workTypes, $authors, $externalReferenceTypes, $languages) {
             // Manages years in the form "YYYY - YYYY"
             if (count(explode(' - ', $record->anno)) == 2) {
                 list($record->anno, $record->{'anno-fine'}) = explode(' - ', $record->anno);
@@ -207,6 +223,12 @@ class ImportOldDb extends Command
                     collect(explode(',', $record->aut_descrizione))->each(fn(string $author) => $description->authors()->attach($authors[trim($author)]));
                 }
             }
+
+            DB::connection('old')->table('a_film_studio')->select('*')->where('id_film', '=', $work->slug)->get()->each(function ($studio) use ($work, $studios) {
+                if(isset($studios[$studio->id_studio])) {
+                    $work->studios()->attach($studios[$studio->id_studio]);
+                }
+            });
         });
     }
 
