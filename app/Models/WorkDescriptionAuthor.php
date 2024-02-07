@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|WorkDescriptionAuthor whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WorkDescriptionAuthor whereUpdatedAt($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkDescription> $descriptions
+ * @property-read int|null $descriptions_count
  * @mixin \Eloquent
  */
 class WorkDescriptionAuthor extends Model

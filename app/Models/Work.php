@@ -51,6 +51,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read int|null $titles_count
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereUpdatedAt($value)
+ * @property string|null $date
+ * @property int|null $end_year
+ * @property int|null $end_date
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkDescription> $descriptions
+ * @property-read int|null $descriptions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Studio> $studios
+ * @property-read int|null $studios_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Work whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Work whereEndDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Work whereEndYear($value)
  * @mixin \Eloquent
  */
 class Work extends Model
