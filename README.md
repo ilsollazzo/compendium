@@ -18,7 +18,7 @@ git clone https://github.com/ilsollazzo/disney_compendium.git
 cd compendium
 composer install
 npm install
-npm run production
+npm run build
 ```
 
 Once installed the project, you need to copy the `.env.example` file to `.env`, configure the MariaDB database host and
