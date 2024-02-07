@@ -17,6 +17,8 @@ After cloning the project, you simply need to install the libraries via [compose
 git clone https://github.com/ilsollazzo/disney_compendium.git
 cd compendium
 composer install
+npm install
+npm run production
 ```
 
 Once installed the project, you need to copy the `.env.example` file to `.env`, configure the MariaDB database host and
