@@ -61,12 +61,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereEndDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereEndYear($value)
+ * @property-read \App\Models\WorkType|null $work_type
  * @mixin \Eloquent
  */
 class Work extends Model
 {
     protected $guarded = ['id'];
-    public function workType(): BelongsTo
+    public function work_type(): BelongsTo
     {
         return $this->belongsTo(WorkType::class);
     }
