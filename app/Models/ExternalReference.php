@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read \App\Models\Work|null $work
  * @property int $work_id
  * @method static \Illuminate\Database\Eloquent\Builder|ExternalReference whereWorkId($value)
+ * @property-read \App\Models\ExternalReferenceType $external_reference_type
  * @mixin \Eloquent
  */
 class ExternalReference extends Model
@@ -35,7 +36,7 @@ class ExternalReference extends Model
         return $this->belongsTo(Work::class);
     }
 
-    public function externalReferenceType(): BelongsTo
+    public function external_reference_type(): BelongsTo
     {
         return $this->belongsTo(ExternalReferenceType::class);
     }
