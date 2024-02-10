@@ -41,7 +41,7 @@ class ImportOldDb extends Command
 
         $this->info('Importing old database...');
 
-        $this->info('Preparing the databases');
+        $this->info('Preparing the databases.');
         $this->cleanupOldDb();
         DB::statement('ALTER TABLE external_reference_types ADD COLUMN slug varchar(255) null AFTER id');
         DB::statement('ALTER TABLE studios ADD COLUMN slug varchar(255) null AFTER id');
