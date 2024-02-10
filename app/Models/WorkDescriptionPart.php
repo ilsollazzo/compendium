@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|WorkDescriptionPart whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WorkDescriptionPart whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WorkDescriptionPart whereWorkDescriptionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WorkDescriptionPart wherePartNo($value)
  * @mixin \Eloquent
  */
 class WorkDescriptionPart extends Model
