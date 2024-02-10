@@ -20,7 +20,6 @@ return new class extends Migration {
             $table->integer('end_date')->nullable();
             $table->integer('duration')->nullable();
             $table->boolean('contains_episodes')->default(false);
-            $table->boolean('is_description_ready')->default(false);
             $table->boolean('is_accessible')->default(true);
             $table->boolean('is_available')->default(true);
             $table->boolean('is_published')->default(false);

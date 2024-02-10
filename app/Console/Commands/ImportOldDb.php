@@ -48,7 +48,7 @@ class ImportOldDb extends Command
         DB::statement('ALTER TABLE work_types ADD COLUMN slug varchar(255) null AFTER id');
 
         foreach (['forum', 'amazon', 'youtube', 'inducks', 'disneyplus', 'steam', 'netflix'] as $id => $slug) {
-            DB::table('external_reference_types')->where(['id' => $id+1])->update(['slug' => $slug]);
+            DB::table('external_reference_types')->where(['id' => $id + 1])->update(['slug' => $slug]);
         }
 
         $this->info('Importing authors.');
@@ -226,18 +226,17 @@ class ImportOldDb extends Command
                 $record->anno = is_numeric($record->anno) ? $record->anno : null;
 
                 $work = new Work([
-                    'slug'                 => $record->id,
-                    'year'                 => $record->anno ?: null,
-                    'date'                 => $record->data ?? null,
-                    'end_year'             => $record->{'anno-fine'} ?: null,
-                    'contains_episodes'    => self::isTrue($record->episodi),
-                    'length'               => $record->durata,
-                    'is_description_ready' => self::isTrue($record->pronto),
-                    'is_accessible'        => self::isTrue($record->pervenuto),
-                    'is_available'         => self::isTrue($record->disponibile),
-                    'is_published'         => self::isTrue($record->uscito),
-                    'work_type_id'         => trim($record->type) ? $workTypes[Str::lower($record->type)] : null,
-                    'utils'                => json_encode([
+                    'slug'              => $record->id,
+                    'year'              => $record->anno ?: null,
+                    'date'              => $record->data ?? null,
+                    'end_year'          => $record->{'anno-fine'} ?: null,
+                    'contains_episodes' => self::isTrue($record->episodi),
+                    'length'            => $record->durata,
+                    'is_accessible'     => self::isTrue($record->pervenuto),
+                    'is_available'      => self::isTrue($record->disponibile),
+                    'is_published'      => self::isTrue($record->uscito),
+                    'work_type_id'      => trim($record->type) ? $workTypes[Str::lower($record->type)] : null,
+                    'utils'             => json_encode([
                         'numbering' => $record->{'util-numerazione'},
                         'link'      => $record->{'util-link'},
                         'reference' => $record->reference,
@@ -286,7 +285,8 @@ class ImportOldDb extends Command
                     $description = new WorkDescription([
                         'work_id'     => $work->id,
                         'language_id' => $languages['it'],
-                        'description' => $record->descrizione
+                        'description' => $record->descrizione,
+                        'is_ready'    => self::isTrue($record->pronto),
                     ]);
                     $description->save();
 

@@ -21,6 +21,7 @@ class WorkDescriptionResource extends JsonResource
             'language'    => $this->language->iso_639_1,
             'description' => $this->description,
             'authors'     => WorkDescriptionAuthorResource::collection($this->authors),
+            'is_ready'    => $this->is_ready
         ];
     }
 }

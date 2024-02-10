@@ -32,7 +32,6 @@ class WorkResource extends JsonResource
             'descriptions'         => WorkDescriptionResource::collection($this->whenLoaded('work_descriptions')),
             'studios'              => StudioResource::collection($this->whenLoaded('studios')),
             'contains_episodes'    => $this->contains_episodes,
-            'is_description_ready' => $this->is_description_ready,
             'is_accessible'        => $this->is_accessible,
             'is_available'         => $this->is_available,
             'is_published'         => $this->is_published,

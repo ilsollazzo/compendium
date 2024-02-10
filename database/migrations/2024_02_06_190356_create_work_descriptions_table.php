@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('work_id')->constrained('works');
             $table->foreignId('language_id')->constrained('languages');
             $table->text('description');
+            $table->boolean('is_ready');
             $table->timestamps();
         });
     }

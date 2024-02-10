@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $description
  * @property int $author_id
  * @property int $contains_episodes
- * @property int $is_description_ready
  * @property int $is_accessible
  * @property int $is_available
  * @property int $is_published

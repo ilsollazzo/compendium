@@ -28,6 +28,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Eloquent\Builder|WorkDescription whereLanguageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WorkDescription whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WorkDescription whereWorkId($value)
+ * @property int $is_ready
+ * @method static \Illuminate\Database\Eloquent\Builder|WorkDescription whereIsReady($value)
  * @mixin \Eloquent
  */
 class WorkDescription extends Model
