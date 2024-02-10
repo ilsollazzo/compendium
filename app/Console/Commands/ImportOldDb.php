@@ -40,7 +40,16 @@ class ImportOldDb extends Command
         $this->call('db:seed', ['--class' => 'Database\Seeders\DatabaseSeeder']);
 
         $this->info('Importing old database...');
+
+        $this->info('Preparing the databases');
         $this->cleanupOldDb();
+        DB::statement('ALTER TABLE external_reference_types ADD COLUMN slug varchar(255) null AFTER id');
+        DB::statement('ALTER TABLE studios ADD COLUMN slug varchar(255) null AFTER id');
+        DB::statement('ALTER TABLE work_types ADD COLUMN slug varchar(255) null AFTER id');
+
+        foreach (['forum', 'amazon', 'youtube', 'inducks', 'disneyplus', 'steam', 'netflix'] as $id => $slug) {
+            DB::table('external_reference_types')->where(['id' => $id+1])->update(['slug' => $slug]);
+        }
 
         $this->info('Importing authors.');
         $this->importAuthors();
@@ -56,6 +65,11 @@ class ImportOldDb extends Command
 
         $this->info('Importing works.');
         $this->importWorks();
+
+        $this->info('Cleaning up.');
+        DB::connection('mysql')->statement('ALTER TABLE external_reference_types DROP COLUMN slug');
+        DB::connection('mysql')->statement('ALTER TABLE studios DROP COLUMN slug');
+        DB::connection('mysql')->statement('ALTER TABLE work_types DROP COLUMN slug');
 
         $this->info('Done.');
     }
@@ -110,7 +124,7 @@ class ImportOldDb extends Command
         DB::connection('old')->table('film')->select(['type'])->distinct()->get()->each(function (object $record) {
             if (trim($record->type)) {
                 (new WorkType([
-                    'name' => Str::ucfirst($record->type),
+                    'name' => Str::lower($record->type),
                     'slug' => Str::lower($record->type),
                 ]))->save();
             }
@@ -189,114 +203,114 @@ class ImportOldDb extends Command
 
         $this->withProgressBar(DB::connection('old')->table('film')->select('*')->get(),
             function ($record) use ($lists, $studios, $workTypes, $authors, $externalReferenceTypes, $languages) {
-            // Manages years in the form "YYYY - YYYY"
-            if (count(explode(' - ', $record->anno)) == 2) {
-                list($record->anno, $record->{'anno-fine'}) = explode(' - ', $record->anno);
-            }
+                // Manages years in the form "YYYY - YYYY"
+                if (count(explode(' - ', $record->anno)) == 2) {
+                    list($record->anno, $record->{'anno-fine'}) = explode(' - ', $record->anno);
+                }
 
-            // Manages years in the form "DD/MM/YYYY"
-            if (count(explode('-', $record->anno)) == 3) {
-                $record->data = $record->anno;
-                $record->anno = explode('-', $record->anno)[0];
-            }
+                // Manages years in the form "DD/MM/YYYY"
+                if (count(explode('-', $record->anno)) == 3) {
+                    $record->data = $record->anno;
+                    $record->anno = explode('-', $record->anno)[0];
+                }
 
-            // Manages years in the form "YYYY/YY" or "YYYY/YYYY"
-            if (count(explode('/', $record->anno)) == 2) {
-                $exploded = explode('/', $record->anno);
-                $record->anno = $exploded[0];
-                $record->{'anno-fine'} = (int)$exploded[1] < 100 ? (int)$exploded[1] + 1900 : $exploded[1];
-            }
+                // Manages years in the form "YYYY/YY" or "YYYY/YYYY"
+                if (count(explode('/', $record->anno)) == 2) {
+                    $exploded = explode('/', $record->anno);
+                    $record->anno = $exploded[0];
+                    $record->{'anno-fine'} = (int)$exploded[1] < 100 ? (int)$exploded[1] + 1900 : $exploded[1];
+                }
 
-            // Manages the null values
-            foreach ($record as $key => $value) {
-                $record->{$key} = (Str::lower($value) == 'null' or !$value) ? null : $value;
-            }
+                // Manages the null values
+                foreach ($record as $key => $value) {
+                    $record->{$key} = (Str::lower($value) == 'null' or !$value) ? null : $value;
+                }
 
-            // Removes non-numeric values from the year
-            $record->anno = is_numeric($record->anno) ? $record->anno : null;
+                // Removes non-numeric values from the year
+                $record->anno = is_numeric($record->anno) ? $record->anno : null;
 
-            $work = new Work([
-                'slug'                 => $record->id,
-                'year'                 => $record->anno ?: null,
-                'date'                 => $record->data ?? null,
-                'end_year'             => $record->{'anno-fine'} ?: null,
-                'contains_episodes'    => self::isTrue($record->episodi),
-                'length'               => $record->durata,
-                'is_description_ready' => self::isTrue($record->pronto),
-                'is_accessible'        => self::isTrue($record->pervenuto),
-                'is_available'         => self::isTrue($record->disponibile),
-                'is_published'         => self::isTrue($record->uscito),
-                'work_type_id'         => trim($record->type) ? $workTypes[Str::lower($record->type)] : null,
-                'utils'                => json_encode([
-                    'numbering' => $record->{'util-numerazione'},
-                    'link'      => $record->{'util-link'},
-                    'reference' => $record->reference,
-                ]),
-            ]);
-            $work->save();
-
-            if ($record->titolo) {
-                $work->titles()->create([
-                    'title'       => $record->titolo,
-                    'language_id' => $languages['it'],
+                $work = new Work([
+                    'slug'                 => $record->id,
+                    'year'                 => $record->anno ?: null,
+                    'date'                 => $record->data ?? null,
+                    'end_year'             => $record->{'anno-fine'} ?: null,
+                    'contains_episodes'    => self::isTrue($record->episodi),
+                    'length'               => $record->durata,
+                    'is_description_ready' => self::isTrue($record->pronto),
+                    'is_accessible'        => self::isTrue($record->pervenuto),
+                    'is_available'         => self::isTrue($record->disponibile),
+                    'is_published'         => self::isTrue($record->uscito),
+                    'work_type_id'         => trim($record->type) ? $workTypes[Str::lower($record->type)] : null,
+                    'utils'                => json_encode([
+                        'numbering' => $record->{'util-numerazione'},
+                        'link'      => $record->{'util-link'},
+                        'reference' => $record->reference,
+                    ]),
                 ]);
-            }
+                $work->save();
 
-            if ($record->{'titolo-en'}) {
-                $work->titles()->create([
-                    'title'       => $record->{'titolo-en'},
-                    'language_id' => $languages['en'],
-                ]);
-            }
-
-            if ($record->{'titolo-orig'}) {
-                $work->titles()->create([
-                    'title'       => $record->{'titolo-orig'},
-                    'language_id' => $languages['xx'],
-                ]);
-            }
-
-            if ($record->topic) {
-                $work->external_references()->create([
-                    'external_reference_type_id' => $externalReferenceTypes['forum'],
-                    'url'                        => $record->topic,
-                ]);
-            }
-
-            foreach (['amazon', 'youtube', 'inducks', 'disneyplus', 'steam', 'netflix'] as $media) {
-                if ($record->{$media}) {
-                    $work->external_references()->create([
-                        'external_reference_type_id' => $externalReferenceTypes[$media],
-                        'url'                        => $record->{$media},
+                if ($record->titolo) {
+                    $work->titles()->create([
+                        'title'       => $record->titolo,
+                        'language_id' => $languages['it'],
                     ]);
                 }
-            }
 
-            if ($record->descrizione) {
-                $description = new WorkDescription([
-                    'work_id'     => $work->id,
-                    'language_id' => $languages['it'],
-                    'description' => $record->descrizione
-                ]);
-                $description->save();
-
-                if ($record->aut_descrizione) {
-                    collect(explode(',', $record->aut_descrizione))->each(fn(string $author) => $description->authors()->attach($authors[trim($author)]));
+                if ($record->{'titolo-en'}) {
+                    $work->titles()->create([
+                        'title'       => $record->{'titolo-en'},
+                        'language_id' => $languages['en'],
+                    ]);
                 }
-            }
 
-            DB::connection('old')->table('a_film_studio')->select('*')->where('id_film', '=', $work->slug)->get()->each(function ($studio) use ($work, $studios) {
-                if (isset($studios[$studio->id_studio])) {
-                    $work->studios()->attach($studios[$studio->id_studio]);
+                if ($record->{'titolo-orig'}) {
+                    $work->titles()->create([
+                        'title'       => $record->{'titolo-orig'},
+                        'language_id' => $languages['xx'],
+                    ]);
                 }
+
+                if ($record->topic) {
+                    $work->external_references()->create([
+                        'external_reference_type_id' => $externalReferenceTypes['forum'],
+                        'url'                        => $record->topic,
+                    ]);
+                }
+
+                foreach (['amazon', 'youtube', 'inducks', 'disneyplus', 'steam', 'netflix'] as $media) {
+                    if ($record->{$media}) {
+                        $work->external_references()->create([
+                            'external_reference_type_id' => $externalReferenceTypes[$media],
+                            'url'                        => $record->{$media},
+                        ]);
+                    }
+                }
+
+                if ($record->descrizione) {
+                    $description = new WorkDescription([
+                        'work_id'     => $work->id,
+                        'language_id' => $languages['it'],
+                        'description' => $record->descrizione
+                    ]);
+                    $description->save();
+
+                    if ($record->aut_descrizione) {
+                        collect(explode(',', $record->aut_descrizione))->each(fn(string $author) => $description->authors()->attach($authors[trim($author)]));
+                    }
+                }
+
+                DB::connection('old')->table('a_film_studio')->select('*')->where('id_film', '=', $work->slug)->get()->each(function ($studio) use ($work, $studios) {
+                    if (isset($studios[$studio->id_studio])) {
+                        $work->studios()->attach($studios[$studio->id_studio]);
+                    }
+                });
+
+                DB::connection('old')->table('a_film_liste')->select('*')->where('id_film', '=', $work->slug)->get()->each(function ($list) use ($work, $lists) {
+                    if (isset($lists[$list->id_lista])) {
+                        $work->work_lists()->attach($lists[$list->id_lista], ((int)$list->ordine or (int)$list->ordine === 0) ? ['order' => (int)$list->ordine] : []);
+                    }
+                });
             });
-
-            DB::connection('old')->table('a_film_liste')->select('*')->where('id_film', '=', $work->slug)->get()->each(function ($list) use ($work, $lists) {
-                if (isset($lists[$list->id_lista])) {
-                    $work->work_lists()->attach($lists[$list->id_lista], ((int)$list->ordine or (int)$list->ordine === 0) ? ['order' => (int)$list->ordine] : []);
-                }
-            });
-        });
         $this->line('');
     }
 

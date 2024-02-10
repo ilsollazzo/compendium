@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('external_reference_types', function (Blueprint $table) {
             $table->id();
-            $table->string('slug');
             $table->string('name');
             $table->timestamps();
         });
