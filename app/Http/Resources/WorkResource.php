@@ -18,26 +18,27 @@ class WorkResource extends JsonResource
          * @var \App\Models\Work|JsonResource $this
          */
         return [
-            'url'                   => route('api.works.show', $this->slug),
-            'titles'               => WorkTitleResource::collection($this->titles),
-            'date'                 => [
+            'url'                 => route('api.works.show', $this->slug),
+            'titles'              => WorkTitleResource::collection($this->titles),
+            'date'                => [
                 'year' => $this->year,
                 'day'  => $this->date,
             ],
-            'end_date'             => $this->when($this->end_year, [
+            'end_date'            => $this->when($this->end_year, [
                 'year' => $this->end_year,
                 'day'  => $this->end_date,
             ]),
-            'duration'             => $this->duration,
-            'descriptions'         => WorkDescriptionResource::collection($this->whenLoaded('work_descriptions')),
-            'studios'              => StudioResource::collection($this->whenLoaded('studios')),
-            'contains_episodes'    => $this->contains_episodes,
-            'is_accessible'        => $this->is_accessible,
-            'is_available'         => $this->is_available,
-            'is_published'         => $this->is_published,
-            'lists'                => WorkListResource::collection($this->whenLoaded('work_lists')),
-            'utils'                => json_decode($this->utils),
-            'type'                 => $this->work_type?->name,
+            'duration'            => $this->duration,
+            'descriptions'        => WorkDescriptionResource::collection($this->whenLoaded('work_descriptions')),
+            'studios'             => StudioResource::collection($this->whenLoaded('studios')),
+            'contains_episodes'   => $this->contains_episodes,
+            'is_accessible'       => $this->is_accessible,
+            'is_available'        => $this->is_available,
+            'is_published'        => $this->is_published,
+            'lists'               => WorkListResource::collection($this->whenLoaded('work_lists')),
+            'external_references' => ExternalReferenceResource::collection($this->whenLoaded('external_references')),
+            'utils'               => json_decode($this->utils),
+            'type'                => $this->work_type?->name,
         ];
     }
 }
