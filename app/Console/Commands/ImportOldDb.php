@@ -293,10 +293,11 @@ class ImportOldDb extends Command
 
             DB::connection('old')->table('a_film_liste')->select('*')->where('id_film', '=', $work->slug)->get()->each(function ($list) use ($work, $lists) {
                 if (isset($lists[$list->id_lista])) {
-                    $work->work_lists()->attach($lists[$list->id_lista], $list->ordine ? ['order' => $list->ordine] : []);
+                    $work->work_lists()->attach($lists[$list->id_lista], ((int)$list->ordine or (int)$list->ordine === 0) ? ['order' => (int)$list->ordine] : []);
                 }
             });
         });
+        $this->line('');
     }
 
     private static function isTrue(mixed $value): bool
