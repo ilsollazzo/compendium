@@ -16,6 +16,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|WorkList newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|WorkList newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|WorkList query()
+ * @property int $id
+ * @property string $slug
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|WorkList whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WorkList whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WorkList whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WorkList whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WorkList whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class WorkList extends Model

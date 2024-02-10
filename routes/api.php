@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Resources\WorkListResource;
 use App\Http\Resources\WorkResource;
 use App\Models\Work;
+use App\Models\WorkList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,5 +31,15 @@ Route::get('/works', function () {
     return WorkResource::collection(Work::paginate());
 })->name('api.work.index');
 Route::get('/works/{slug}', function (string $slug) {
-    return new WorkResource(Work::where('slug', $slug)->firstOrFail());
+    return new WorkResource(Work::where('slug', $slug)->with(['studios', 'descriptions', 'work_lists'])->firstOrFail());
 })->name('api.works.show');
+
+/**
+ * LISTS
+ */
+Route::get('/lists', function () {
+    return WorkListResource::collection(Work::paginate());
+})->name('api.list.index');
+Route::get('/lists/{slug}', function (string $slug) {
+    return new WorkListResource(WorkList::where('slug', $slug)->with('works')->firstOrFail());
+})->name('api.list.show');

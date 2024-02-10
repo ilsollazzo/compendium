@@ -15,7 +15,7 @@ class WorkResource extends JsonResource
     public function toArray(Request $request): array
     {
         /**
-         * @var \App\Models\Work $this
+         * @var \App\Models\Work|JsonResource $this
          */
         return [
             'url'                   => route('api.works.show', $this->slug),
@@ -29,13 +29,14 @@ class WorkResource extends JsonResource
                 'day'  => $this->end_date,
             ],
             'duration'             => $this->duration,
-            'descriptions'         => WorkDescriptionResource::collection($this->descriptions),
-            'studios'              => StudioResource::collection($this->studios),
+            'descriptions'         => WorkDescriptionResource::collection($this->whenLoaded('descriptions')),
+            'studios'              => StudioResource::collection($this->whenLoaded('studios')),
             'contains_episodes'    => $this->contains_episodes,
             'is_description_ready' => $this->is_description_ready,
             'is_accessible'        => $this->is_accessible,
             'is_available'         => $this->is_available,
             'is_published'         => $this->is_published,
+            'lists'                => WorkListResource::collection($this->whenLoaded('work_lists')),
             'utils'                => json_decode($this->utils),
             'type'                 => $this->work_type?->name,
         ];
