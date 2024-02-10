@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Forum',
             ],
             [
-                'name' => 'Website',
+                'name' => 'Amazon',
             ],
             [
                 'name' => 'Youtube',
