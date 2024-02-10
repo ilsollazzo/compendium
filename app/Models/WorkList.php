@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * App\Models\WorkList
  *
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkListName> $work_list_names
- * @property-read int|null $work_list_names_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkListDetail> $work_list_details
+ * @property-read int|null $work_list_details_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Work> $works
  * @property-read int|null $works_count
  * @method static \Illuminate\Database\Eloquent\Builder|WorkList newModelQuery()
@@ -37,8 +37,8 @@ class WorkList extends Model
         return $this->belongsToMany(Work::class, 'lnk_works_work_lists', 'work_list_id', 'work_id');
     }
 
-    public function work_list_names(): HasMany
+    public function work_list_details(): HasMany
     {
-        return $this->hasMany(WorkListName::class);
+        return $this->hasMany(WorkListDetail::class);
     }
 }

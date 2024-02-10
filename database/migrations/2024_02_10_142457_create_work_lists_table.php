@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('work_lists', function (Blueprint $table) {
             $table->id();
             $table->string('slug');
-            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

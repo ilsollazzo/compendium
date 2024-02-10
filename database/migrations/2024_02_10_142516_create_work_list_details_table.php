@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('work_list_names', function (Blueprint $table) {
+        Schema::create('work_list_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('work_list_id')->constrained('work_lists');
             $table->foreignId('language_id')->constrained('languages');
             $table->string('name');
+            $table->text('description')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('work_list_names');
+        Schema::dropIfExists('work_list_details');
     }
 };

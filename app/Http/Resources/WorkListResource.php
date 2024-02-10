@@ -18,9 +18,9 @@ class WorkListResource extends JsonResource
          * @var \App\Models\WorkList|JsonResource $this
          */
         return [
-            'url'   => route('api.list.show', $this->slug),
-            'names' => WorkListNameResource::collection($this->work_list_names),
-            'works' => WorkResource::collection($this->whenLoaded('works')),
+            'url'     => route('api.list.show', $this->slug),
+            'details' => WorkListDetailResource::collection($this->work_list_details),
+            'works'   => WorkResource::collection($this->whenLoaded('works')),
         ];
     }
 }

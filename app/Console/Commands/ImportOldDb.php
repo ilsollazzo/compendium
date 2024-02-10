@@ -9,7 +9,7 @@ use App\Models\ExternalReferenceType;
 use App\Models\Language;
 use App\Models\Work;
 use App\Models\WorkList;
-use App\Models\WorkListName;
+use App\Models\WorkListDetail;
 use App\Models\WorkType;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -156,34 +156,30 @@ class ImportOldDb extends Command
             ]);
             $list->save();
 
-            $notes = '';
-
             if (trim($record->nome_it)) {
                 $exploded = explode("\n", $record->nome_it);
-                (new WorkListName([
+                $detail = new WorkListDetail([
                     'work_list_id' => $list->id,
                     'language_id'  => $languages['it'],
                     'name'         => $exploded[0],
-                ]))->save();
+                ]);
                 if (count($exploded) > 1) {
-                    $notes .= trim(implode(array_slice($exploded, 1))) . "\n";
+                    $detail->notes = trim(implode(array_slice($exploded, 1))) . "\n";
                 }
+                $detail->save();
             }
 
             if (trim($record->nome_en)) {
                 $exploded = explode("\n", $record->nome_en);
-                (new WorkListName([
+                $detail = new WorkListDetail([
                     'work_list_id' => $list->id,
                     'language_id'  => $languages['en'],
                     'name'         => $exploded[0],
-                ]))->save();
+                ]);
                 if (count($exploded) > 1) {
-                    $notes .= trim(implode(array_slice($exploded, 1))) . "\n";
+                    $detail->notes = trim(implode(array_slice($exploded, 1))) . "\n";
                 }
-            }
-
-            if (trim($notes)) {
-                $list->update(['notes' => $notes]);
+                $detail->save();
             }
         });
     }
