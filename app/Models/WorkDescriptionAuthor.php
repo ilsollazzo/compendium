@@ -23,14 +23,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|WorkDescriptionAuthor whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WorkDescriptionAuthor whereUpdatedAt($value)
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkDescription> $descriptions
- * @property-read int|null $descriptions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkDescription> $work_descriptions
+ * @property-read int|null $work_descriptions_count
  * @mixin \Eloquent
  */
 class WorkDescriptionAuthor extends Model
 {
     protected $guarded = ['id'];
-    public function descriptions(): BelongsToMany
+    public function work_descriptions(): BelongsToMany
     {
         return $this->belongsToMany(WorkDescription::class, 'lnk_descriptions_authors');
     }

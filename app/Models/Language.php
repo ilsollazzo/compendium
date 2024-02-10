@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $iso_639_1
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkDescription> $descriptions
- * @property-read int|null $descriptions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkDescription> $work_descriptions
+ * @property-read int|null $work_descriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Work> $works
  * @property-read int|null $works_count
  * @method static \Illuminate\Database\Eloquent\Builder|Language newModelQuery()
@@ -34,7 +34,7 @@ class Language extends Model
         return $this->hasMany(Work::class);
     }
 
-    public function descriptions(): HasMany
+    public function work_descriptions(): HasMany
     {
         return $this->hasMany(WorkDescription::class);
     }
