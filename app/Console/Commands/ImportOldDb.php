@@ -91,6 +91,12 @@ class ImportOldDb extends Command
         // Nullfies the almost-null author names
         DB::connection('old')->table('film')->whereIn('aut_descrizione', ['', '2669', 'NULL'])->update(['aut_descrizione' => null]);
 
+        // Replaces first-level and third-level headings with second-level headings
+        DB::connection('old')->statement("UPDATE film SET descrizione = REPLACE(descrizione, '<h1>', '<h2>')");
+        DB::connection('old')->statement("UPDATE film SET descrizione = REPLACE(descrizione, '</h1>', '</h2>')");
+        DB::connection('old')->statement("UPDATE film SET descrizione = REPLACE(descrizione, '<h3>', '<h2>')");
+        DB::connection('old')->statement("UPDATE film SET descrizione = REPLACE(descrizione, '</h3>', '</h2>')");
+
         // Cleans errors up
         DB::connection('old')->table('film')->where('id', '=', 'TheAbsentMindedProfessor ')->update(['id' => 'TheAbsentMindedProfessor2']);
         DB::connection('old')->table('a_film_liste')->where('id_film', '=', 'TheAbsentMindedProfessor ')->update(['id_film' => 'TheAbsentMindedProfessor2']);
@@ -106,7 +112,7 @@ class ImportOldDb extends Command
      */
     private function importAuthors(): void
     {
-        $old_authors = DB::connection('old')->table('film')->select(['aut_descrizione'])->distinct()->get()->reduce(function ($authors, $record) {
+        DB::connection('old')->table('film')->select(['aut_descrizione'])->distinct()->get()->reduce(function ($authors, $record) {
             collect(explode(',', $record->aut_descrizione))->each(fn(string $author) => $authors->push(trim($author) ?: null));
             return $authors->unique();
         }, collect())->each(function ($author) {
@@ -285,10 +291,21 @@ class ImportOldDb extends Command
                     $description = new WorkDescription([
                         'work_id'     => $work->id,
                         'language_id' => $languages['it'],
-                        'description' => $record->descrizione,
                         'is_ready'    => self::isTrue($record->pronto),
                     ]);
                     $description->save();
+
+                    $descriptionParts = explode("<h2", $record->descrizione);
+                    foreach ($descriptionParts as $key => $part) {
+                        $part = '<h2' . $part;
+                        $title = Str::between($part, '<h2>', '</h2>');
+                        $content = Str::after($part, '</h2>');
+                        $description->work_description_parts()->create([
+                            'part_no' => $key + 1,
+                            'title'   => trim($title),
+                            'content' => trim($content),
+                        ]);
+                    }
 
                     if ($record->aut_descrizione) {
                         collect(explode(',', $record->aut_descrizione))->each(fn(string $author) => $description->authors()->attach($authors[trim($author)]));

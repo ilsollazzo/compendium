@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * App\Models\WorkDescription
@@ -30,6 +31,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Eloquent\Builder|WorkDescription whereWorkId($value)
  * @property int $is_ready
  * @method static \Illuminate\Database\Eloquent\Builder|WorkDescription whereIsReady($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkDescriptionPart> $work_description_parts
+ * @property-read int|null $work_description_parts_count
  * @mixin \Eloquent
  */
 class WorkDescription extends Model
@@ -44,6 +47,11 @@ class WorkDescription extends Model
     public function language(): BelongsTo
     {
         return $this->belongsTo(Language::class);
+    }
+
+    public function work_description_parts(): HasMany
+    {
+        return $this->hasMany(WorkDescriptionPart::class)->orderBy('part_no');
     }
 
     public function authors(): BelongsToMany

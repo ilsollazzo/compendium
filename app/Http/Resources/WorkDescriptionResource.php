@@ -18,10 +18,10 @@ class WorkDescriptionResource extends JsonResource
          * @var \App\Models\WorkDescription $this
          */
         return [
-            'language'    => $this->language->iso_639_1,
-            'description' => $this->description,
-            'authors'     => WorkDescriptionAuthorResource::collection($this->authors),
-            'is_ready'    => $this->is_ready
+            'language' => $this->language->iso_639_1,
+            'parts'    => WorkDescriptionPartResource::collection($this->work_description_parts),
+            'authors'  => WorkDescriptionAuthorResource::collection($this->authors),
+            'is_ready' => $this->is_ready
         ];
     }
 }
