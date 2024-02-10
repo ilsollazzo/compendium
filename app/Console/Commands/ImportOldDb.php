@@ -187,7 +187,8 @@ class ImportOldDb extends Command
         $studios = Studio::pluck('id', 'slug')->toArray();
         $lists = WorkList::pluck('id', 'slug')->toArray();
 
-        DB::connection('old')->table('film')->select('*')->get()->each(function ($record) use ($lists, $studios, $workTypes, $authors, $externalReferenceTypes, $languages) {
+        $this->withProgressBar(DB::connection('old')->table('film')->select('*')->get(),
+            function ($record) use ($lists, $studios, $workTypes, $authors, $externalReferenceTypes, $languages) {
             // Manages years in the form "YYYY - YYYY"
             if (count(explode(' - ', $record->anno)) == 2) {
                 list($record->anno, $record->{'anno-fine'}) = explode(' - ', $record->anno);
