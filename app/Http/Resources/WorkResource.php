@@ -24,10 +24,10 @@ class WorkResource extends JsonResource
                 'year' => $this->year,
                 'day'  => $this->date,
             ],
-            'end_date'             => [
+            'end_date'             => $this->when($this->end_year, [
                 'year' => $this->end_year,
                 'day'  => $this->end_date,
-            ],
+            ]),
             'duration'             => $this->duration,
             'descriptions'         => WorkDescriptionResource::collection($this->whenLoaded('work_descriptions')),
             'studios'              => StudioResource::collection($this->whenLoaded('studios')),
