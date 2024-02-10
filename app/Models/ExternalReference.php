@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $work_id
  * @method static \Illuminate\Database\Eloquent\Builder|ExternalReference whereWorkId($value)
  * @property-read \App\Models\ExternalReferenceType $external_reference_type
+ * @property-read string $complete_url
  * @mixin \Eloquent
  */
 class ExternalReference extends Model
@@ -39,5 +40,10 @@ class ExternalReference extends Model
     public function external_reference_type(): BelongsTo
     {
         return $this->belongsTo(ExternalReferenceType::class);
+    }
+
+    public function getCompleteUrlAttribute(): string
+    {
+        return str_replace(':replace:', $this->url, $this->external_reference_type->url_model);
     }
 }

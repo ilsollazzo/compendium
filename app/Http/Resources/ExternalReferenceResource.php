@@ -19,7 +19,7 @@ class ExternalReferenceResource extends JsonResource
          */
         return [
             'name' => $this->external_reference_type->name,
-            'url'  => $this->url,
+            'url'  => $this->complete_url,
         ];
     }
 }

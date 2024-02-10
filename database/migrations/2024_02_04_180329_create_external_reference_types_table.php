@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('external_reference_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('url_model')->nullable();
             $table->timestamps();
         });
     }
