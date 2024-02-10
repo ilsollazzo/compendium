@@ -8,6 +8,8 @@ use App\Models\WorkDescription;
 use App\Models\ExternalReferenceType;
 use App\Models\Language;
 use App\Models\Work;
+use App\Models\WorkList;
+use App\Models\WorkListName;
 use App\Models\WorkType;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -39,10 +41,23 @@ class ImportOldDb extends Command
 
         $this->info('Importing old database...');
         $this->cleanupOldDb();
+
+        $this->info('Importing authors.');
         $this->importAuthors();
+
+        $this->info('Importing work types.');
         $this->importWorkTypes();
+
+        $this->info('Importing studios.');
         $this->importStudios();
+
+        $this->info('Importing lists.');
+        $this->importLists();
+
+        $this->info('Importing works.');
         $this->importWorks();
+
+        $this->info('Done.');
     }
 
     /**
@@ -77,7 +92,7 @@ class ImportOldDb extends Command
      */
     private function importAuthors(): void
     {
-        DB::connection('old')->table('film')->select(['aut_descrizione'])->distinct()->get()->reduce(function ($authors, $record) {
+        $old_authors = DB::connection('old')->table('film')->select(['aut_descrizione'])->distinct()->get()->reduce(function ($authors, $record) {
             collect(explode(',', $record->aut_descrizione))->each(fn(string $author) => $authors->push(trim($author) ?: null));
             return $authors->unique();
         }, collect())->each(function ($author) {
@@ -116,6 +131,50 @@ class ImportOldDb extends Command
     }
 
     /**
+     * Imports the studios from the old database
+     */
+    private function importLists(): void
+    {
+        $languages = Language::pluck('id', 'iso_639_1')->toArray();
+        DB::connection('old')->table('liste')->get()->each(function (object $record) use ($languages) {
+            $list = new WorkList([
+                'slug' => $record->id,
+            ]);
+            $list->save();
+
+            $notes = '';
+
+            if (trim($record->nome_it)) {
+                $exploded = explode("\n", $record->nome_it);
+                (new WorkListName([
+                    'work_list_id' => $list->id,
+                    'language_id'  => $languages['it'],
+                    'name'         => $exploded[0],
+                ]))->save();
+                if (count($exploded) > 1) {
+                    $notes .= trim(implode(array_slice($exploded, 1))) . "\n";
+                }
+            }
+
+            if (trim($record->nome_en)) {
+                $exploded = explode("\n", $record->nome_en);
+                (new WorkListName([
+                    'work_list_id' => $list->id,
+                    'language_id'  => $languages['en'],
+                    'name'         => $exploded[0],
+                ]))->save();
+                if (count($exploded) > 1) {
+                    $notes .= trim(implode(array_slice($exploded, 1))) . "\n";
+                }
+            }
+
+            if (trim($notes)) {
+                $list->update(['notes' => $notes]);
+            }
+        });
+    }
+
+    /**
      * Imports the works table from the old database
      * @return void
      */
@@ -126,8 +185,9 @@ class ImportOldDb extends Command
         $authors = WorkDescriptionAuthor::pluck('id', 'name')->toArray();
         $languages = Language::pluck('id', 'iso_639_1')->toArray();
         $studios = Studio::pluck('id', 'slug')->toArray();
+        $lists = WorkList::pluck('id', 'slug')->toArray();
 
-        DB::connection('old')->table('film')->select('*')->get()->each(function ($record) use ($studios, $workTypes, $authors, $externalReferenceTypes, $languages) {
+        DB::connection('old')->table('film')->select('*')->get()->each(function ($record) use ($lists, $studios, $workTypes, $authors, $externalReferenceTypes, $languages) {
             // Manages years in the form "YYYY - YYYY"
             if (count(explode(' - ', $record->anno)) == 2) {
                 list($record->anno, $record->{'anno-fine'}) = explode(' - ', $record->anno);
@@ -225,8 +285,14 @@ class ImportOldDb extends Command
             }
 
             DB::connection('old')->table('a_film_studio')->select('*')->where('id_film', '=', $work->slug)->get()->each(function ($studio) use ($work, $studios) {
-                if(isset($studios[$studio->id_studio])) {
+                if (isset($studios[$studio->id_studio])) {
                     $work->studios()->attach($studios[$studio->id_studio]);
+                }
+            });
+
+            DB::connection('old')->table('a_film_liste')->select('*')->where('id_film', '=', $work->slug)->get()->each(function ($list) use ($work, $lists) {
+                if (isset($lists[$list->id_lista])) {
+                    $work->work_lists()->attach($lists[$list->id_lista], $list->ordine ? ['order' => $list->ordine] : []);
                 }
             });
         });

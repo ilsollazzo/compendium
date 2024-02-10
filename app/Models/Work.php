@@ -62,6 +62,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereEndDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereEndYear($value)
  * @property-read \App\Models\WorkType|null $work_type
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkList> $work_lists
+ * @property-read int|null $work_lists_count
  * @mixin \Eloquent
  */
 class Work extends Model
@@ -90,5 +92,10 @@ class Work extends Model
     public function studios(): BelongsToMany
     {
         return $this->belongsToMany(Studio::class, 'lnk_works_studios');
+    }
+
+    public function work_lists(): BelongsToMany
+    {
+        return $this->belongsToMany(WorkList::class, 'lnk_works_work_lists');
     }
 }
