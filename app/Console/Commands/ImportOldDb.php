@@ -171,7 +171,7 @@ class ImportOldDb extends Command
     private function importLists(): void
     {
         $languages = Language::pluck('id', 'iso_639_1')->toArray();
-        DB::connection('old')->table('liste')->get()->each(function (object $record) use ($languages) {
+        $this->withProgressBar(DB::connection('old')->table('liste')->get(), function (object $record) use ($languages) {
             $list = new WorkList([
                 'slug' => $record->id,
             ]);
@@ -203,6 +203,7 @@ class ImportOldDb extends Command
                 $detail->save();
             }
         });
+        $this->line('');
     }
 
     /**
