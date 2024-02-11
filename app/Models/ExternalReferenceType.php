@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read int|null $external_references_count
  * @property string $slug
  * @method static \Illuminate\Database\Eloquent\Builder|ExternalReferenceType whereSlug($value)
+ * @property string|null $url_model
+ * @method static \Illuminate\Database\Eloquent\Builder|ExternalReferenceType whereUrlModel($value)
  * @mixin \Eloquent
  */
 class ExternalReferenceType extends Model
