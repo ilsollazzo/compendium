@@ -34,7 +34,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WorkCastMembership extends Model
 {
     protected $guarded = ['id'];
-    protected $table = 'work_cast_memberships';
 
     public function work(): BelongsTo
     {

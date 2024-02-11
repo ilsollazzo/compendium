@@ -31,7 +31,7 @@ Route::get('/works', function () {
     return WorkResource::collection(Work::paginate());
 })->name('api.work.index');
 Route::get('/works/{slug}', function (string $slug) {
-    return new WorkResource(Work::where('slug', $slug)->with(['studios', 'work_descriptions', 'work_lists', 'external_references'])->firstOrFail());
+    return new WorkResource(Work::where('slug', $slug)->with(['studios', 'work_descriptions', 'work_lists', 'external_references', 'episodes', 'cast_memberships'])->firstOrFail());
 })->name('api.works.show');
 
 /**
