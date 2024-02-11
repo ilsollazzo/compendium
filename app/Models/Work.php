@@ -69,6 +69,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read int|null $episodes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkCastMembership> $cast_memberships
  * @property-read int|null $cast_memberships_count
+ * @property int $is_lost
+ * @method static \Illuminate\Database\Eloquent\Builder|Work whereIsLost($value)
  * @mixin \Eloquent
  */
 class Work extends Model

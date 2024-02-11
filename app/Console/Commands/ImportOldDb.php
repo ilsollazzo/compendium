@@ -298,6 +298,7 @@ class ImportOldDb extends Command
                     'length'            => $record->durata,
                     'is_accessible'     => self::isTrue($record->pervenuto),
                     'is_available'      => self::isTrue($record->disponibile),
+                    'is_lost'           => $record->disponibile == 'lost',
                     'is_published'      => self::isTrue($record->uscito),
                     'work_type_id'      => trim($record->type) ? $workTypes[Str::lower($record->type)] : null,
                     'utils'             => json_encode([
@@ -437,6 +438,6 @@ class ImportOldDb extends Command
 
     private static function isTrue(mixed $value): bool
     {
-        return ($value or $value == 1 or Str::lower($value) == 'true');
+        return ($value === true or $value === 1 or Str::lower($value) == 'true' or Str::lower($value) == 'yes');
     }
 }

@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->boolean('contains_episodes')->default(false);
             $table->boolean('is_accessible')->default(true);
             $table->boolean('is_available')->default(true);
+            $table->boolean('is_lost')->default(false);
             $table->boolean('is_published')->default(false);
             $table->json('utils')->nullable();
             $table->timestamps();

@@ -35,6 +35,7 @@ class WorkResource extends JsonResource
             'is_accessible'       => $this->is_accessible,
             'is_available'        => $this->is_available,
             'is_published'        => $this->is_published,
+            'is_lost'             => $this->is_lost,
             'episodes'            => $this->when($this->episodes->count(), WorkEpisodeResource::collection($this->whenLoaded('episodes'))),
             'cast_members'        => WorkCastMembershipResource::collection($this->whenLoaded('cast_memberships')),
             'lists'               => WorkListResource::collection($this->whenLoaded('work_lists')),
