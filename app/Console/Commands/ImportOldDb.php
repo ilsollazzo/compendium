@@ -289,6 +289,7 @@ class ImportOldDb extends Command
                 // Removes non-numeric values from the year
                 $record->anno = is_numeric($record->anno) ? $record->anno : null;
 
+                // Creates base Work record
                 $work = new Work([
                     'slug'              => $record->id,
                     'year'              => $record->anno ?: null,
@@ -309,6 +310,7 @@ class ImportOldDb extends Command
                 ]);
                 $work->save();
 
+                // Imports Italian title if available
                 if ($record->titolo) {
                     $work->titles()->create([
                         'title'       => $record->titolo,
@@ -316,6 +318,7 @@ class ImportOldDb extends Command
                     ]);
                 }
 
+                // Imports (hopefully) English title if available
                 if ($record->{'titolo-en'}) {
                     $work->titles()->create([
                         'title'       => $record->{'titolo-en'},
@@ -323,6 +326,7 @@ class ImportOldDb extends Command
                     ]);
                 }
 
+                // Imports "original" title if available
                 if ($record->{'titolo-orig'}) {
                     $work->titles()->create([
                         'title'       => $record->{'titolo-orig'},
@@ -330,6 +334,7 @@ class ImportOldDb extends Command
                     ]);
                 }
 
+                // Imports external reference to the Sollazzo forum
                 if ($record->topic) {
                     $work->external_references()->create([
                         'external_reference_type_id' => $externalReferenceTypes['forum'],
@@ -337,6 +342,7 @@ class ImportOldDb extends Command
                     ]);
                 }
 
+                // Import other external references
                 foreach (['amazon', 'youtube', 'inducks', 'disneyplus', 'steam', 'netflix'] as $media) {
                     if ($record->{$media}) {
                         $work->external_references()->create([
@@ -346,6 +352,7 @@ class ImportOldDb extends Command
                     }
                 }
 
+                // Imports the Italian work description, splitting it into parts based on the headings
                 if ($record->descrizione) {
                     $description = new WorkDescription([
                         'work_id'     => $work->id,
@@ -375,18 +382,21 @@ class ImportOldDb extends Command
                     }
                 }
 
+                // Imports the relation with studios
                 DB::connection('old')->table('a_film_studio')->select('*')->where('id_film', '=', $work->slug)->get()->each(function ($studio) use ($work, $studios) {
                     if (isset($studios[$studio->id_studio])) {
                         $work->studios()->attach($studios[$studio->id_studio]);
                     }
                 });
 
+                // Imports the relation with lists
                 DB::connection('old')->table('a_film_liste')->select('*')->where('id_film', '=', $work->slug)->get()->each(function ($list) use ($work, $lists) {
                     if (isset($lists[$list->id_lista])) {
                         $work->work_lists()->attach($lists[$list->id_lista], ((int)$list->ordine or (int)$list->ordine === 0) ? ['order' => (int)$list->ordine] : []);
                     }
                 });
 
+                // Imports the relation with episodes
                 DB::connection('old')->table('episodi')->select('*')->where('id_film', '=', $work->slug)->get()->each(function ($episode) use ($languages, $work) {
                     $newEpisode = new WorkEpisode([
                         'work_id' => $work->id,
@@ -409,6 +419,7 @@ class ImportOldDb extends Command
                     }
                 });
 
+                // Imports the relation with cast members
                 DB::connection('old')->table('a_film_persone')->select('*')->where('id_film', '=', $work->slug)->get()->each(function ($cast_lnk) use ($castRoles, $castMembers, $work) {
                     if (!isset($castMembers[$cast_lnk->id_persona])) {
                         $exploded = preg_split('/(?=[A-Z])/', $cast_lnk->id_persona);
