@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Work;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,18 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+# Works
+Route::get('/works/{slug}/thumbnail.webp', function (string $slug) {
+    $work = Work::firstWhere('slug', '=', $slug);
+    if($work and Storage::disk('works_thumbnails')->exists("{$work->id}.webp")) {
+        $file = Storage::disk('works_thumbnails')->get("{$work->id}.webp");
+
+        return response($file)->withHeaders([
+            'Content-Type' => 'image/webp',
+            'Content-Length' => strlen($file),
+        ]);
+    } else {
+        abort(404);
+    }
+})->name('work.thumbnail');

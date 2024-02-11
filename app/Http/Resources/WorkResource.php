@@ -19,6 +19,7 @@ class WorkResource extends JsonResource
          */
         return [
             'url'                 => route('api.works.show', $this->slug),
+            'thumbnail'           => route('work.thumbnail', $this->slug),
             'titles'              => WorkTitleResource::collection($this->titles),
             'date'                => [
                 'year' => $this->year,
