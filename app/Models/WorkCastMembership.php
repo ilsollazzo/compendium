@@ -29,6 +29,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|WorkCastMembership whereWorkEpisodeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WorkCastMembership whereWorkId($value)
  * @property-read \App\Models\WorkEpisode|null $episode
+ * @property string $notes
+ * @method static \Illuminate\Database\Eloquent\Builder|WorkCastMembership whereNotes($value)
  * @mixin \Eloquent
  */
 class WorkCastMembership extends Model

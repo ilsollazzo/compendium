@@ -356,7 +356,7 @@ class ImportOldDb extends Command
 
                     $descriptionParts = explode("<h2", $record->descrizione);
                     foreach ($descriptionParts as $key => $part) {
-                        if(trim($part) == '') {
+                        if (trim($part) == '') {
                             continue;
                         }
 
@@ -421,7 +421,7 @@ class ImportOldDb extends Command
                         $castMembers[$cast_lnk->id_persona] = $newMember->id;
                     }
 
-                    if(!isset($castRoles[$cast_lnk->ruolo])) {
+                    if (!isset($castRoles[$cast_lnk->ruolo])) {
                         return;
                     }
 
@@ -430,6 +430,7 @@ class ImportOldDb extends Command
                         'cast_member_id'  => $castMembers[$cast_lnk->id_persona],
                         'cast_role_id'    => $castRoles[$cast_lnk->ruolo],
                         'work_episode_id' => $cast_lnk->episodio ? (WorkEpisode::where('work_id', $work->id)->where('number', $cast_lnk->episodio)->first()->id ?? null) : null,
+                        'notes'           => trim($cast_lnk->note) ? $cast_lnk->note : null,
                     ]))->save();
                 });
             });

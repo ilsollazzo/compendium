@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('cast_member_id')->constrained('cast_members');
             $table->foreignId('cast_role_id')->constrained('cast_roles');
             $table->foreignId('work_episode_id')->nullable()->constrained('work_episodes');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

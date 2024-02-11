@@ -21,6 +21,7 @@ class WorkCastMembershipResource extends JsonResource
             'person'  => new CastMemberResource($this->cast_member),
             'role'    => new CastRoleResource($this->cast_role),
             'episode' => $this->when($this->episode, new WorkEpisodeResource($this->episode)),
+            'notes'   => $this->when($this->notes, $this->notes),
         ];
     }
 }
