@@ -355,6 +355,10 @@ class ImportOldDb extends Command
 
                     $descriptionParts = explode("<h2", $record->descrizione);
                     foreach ($descriptionParts as $key => $part) {
+                        if(trim($part) == '') {
+                            continue;
+                        }
+
                         $part = '<h2' . $part;
                         $title = Str::between($part, '<h2>', '</h2>');
                         $content = Str::after($part, '</h2>');
