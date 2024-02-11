@@ -68,6 +68,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Work extends Model
 {
     protected $guarded = ['id'];
+
+    protected $casts = [
+        'date' => 'date',
+    ];
+
     public function work_type(): BelongsTo
     {
         return $this->belongsTo(WorkType::class);
