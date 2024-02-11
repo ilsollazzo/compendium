@@ -353,7 +353,7 @@ class ImportOldDb extends Command
                     }
                 }
 
-                // Imports the Italian work description, splitting it into parts based on the headings
+                // Imports the Italian work description, splitting it into parts based on the headings and removing images
                 if ($record->descrizione) {
                     $description = new WorkDescription([
                         'work_id'     => $work->id,
@@ -371,6 +371,8 @@ class ImportOldDb extends Command
                         $part = '<h2' . $part;
                         $title = Str::between($part, '<h2>', '</h2>');
                         $content = Str::after($part, '</h2>');
+                        $content = preg_replace("/<img[^>]+>/i", "", $content);
+                        $content = preg_replace("/\sitemprop=[\"']description[\"']/i", "", $content);
                         $description->work_description_parts()->create([
                             'part_no' => $key + 1,
                             'title'   => trim($title),
