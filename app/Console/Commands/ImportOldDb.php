@@ -2,7 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\CastMember;
+use App\Models\CastRole;
 use App\Models\Studio;
+use App\Models\WorkCastMembership;
 use App\Models\WorkDescriptionAuthor;
 use App\Models\WorkDescription;
 use App\Models\ExternalReferenceType;
@@ -47,6 +50,8 @@ class ImportOldDb extends Command
         DB::statement('ALTER TABLE external_reference_types ADD COLUMN slug varchar(255) null AFTER id');
         DB::statement('ALTER TABLE studios ADD COLUMN slug varchar(255) null AFTER id');
         DB::statement('ALTER TABLE work_types ADD COLUMN slug varchar(255) null AFTER id');
+        DB::statement('ALTER TABLE cast_members ADD COLUMN slug varchar(255) null AFTER id');
+        DB::statement('ALTER TABLE cast_roles ADD COLUMN slug varchar(255) null AFTER id');
 
         foreach (['forum', 'amazon', 'youtube', 'inducks', 'disneyplus', 'steam', 'netflix'] as $id => $slug) {
             DB::table('external_reference_types')->where(['id' => $id + 1])->update(['slug' => $slug]);
@@ -64,6 +69,12 @@ class ImportOldDb extends Command
         $this->info('Importing lists.');
         $this->importLists();
 
+        $this->info('Importing cast members.');
+        $this->importCastMembers();
+
+        $this->info('Importing cast roles.');
+        $this->importCastRoles();
+
         $this->info('Importing works.');
         $this->importWorks();
 
@@ -71,6 +82,8 @@ class ImportOldDb extends Command
         DB::connection('mysql')->statement('ALTER TABLE external_reference_types DROP COLUMN slug');
         DB::connection('mysql')->statement('ALTER TABLE studios DROP COLUMN slug');
         DB::connection('mysql')->statement('ALTER TABLE work_types DROP COLUMN slug');
+        DB::connection('mysql')->statement('ALTER TABLE cast_members DROP COLUMN slug');
+        DB::connection('mysql')->statement('ALTER TABLE cast_roles DROP COLUMN slug');
 
         $this->info('Done.');
     }
@@ -104,6 +117,7 @@ class ImportOldDb extends Command
         DB::connection('old')->table('a_film_persone')->where('id_film', '=', 'TheAbsentMindedProfessor ')->update(['id_film' => 'TheAbsentMindedProfessor2']);
         DB::connection('old')->table('a_film_studio')->where('id_film', '=', 'TheAbsentMindedProfessor ')->update(['id_film' => 'TheAbsentMindedProfessor2']);
         DB::connection('old')->table('film')->delete('');
+        DB::connection('old')->table('a_film_persone')->where('id_persona', '=', 'AndtEngman')->update(['id_persona' => 'AndyEngman']);
     }
 
     /**
@@ -192,6 +206,47 @@ class ImportOldDb extends Command
     }
 
     /**
+     * Imports the cast members from the old database
+     * @return void
+     */
+    private function importCastMembers(): void
+    {
+        $this->withProgressBar(DB::connection('old')->table('persone')->get(), function (\stdClass $castMember) {
+            (new CastMember([
+                'slug'    => $castMember->id,
+                'name'    => $castMember->nome,
+                'surname' => $castMember->cognome,
+            ]))->save();
+        });
+        $this->line('');
+    }
+
+    /**
+     * Imports the cast roles from the old database
+     * @return void
+     */
+    private function importCastRoles(): void
+    {
+        $languages = Language::pluck('id', 'iso_639_1')->toArray();
+        DB::connection('old')->table('ruoli')->get()->each(function (\stdClass $castRole) use ($languages) {
+            $newCastRole = new CastRole(['slug' => $castRole->id]);
+            $newCastRole->save();
+            if (trim($castRole->ita)) {
+                $newCastRole->cast_role_details()->create([
+                    'name'        => $castRole->ita,
+                    'language_id' => $languages['it'],
+                ]);
+            }
+            if (trim($castRole->en)) {
+                $newCastRole->cast_role_details()->create([
+                    'name'        => $castRole->en,
+                    'language_id' => $languages['en'],
+                ]);
+            }
+        });
+    }
+
+    /**
      * Imports the works table from the old database
      * @return void
      */
@@ -203,9 +258,11 @@ class ImportOldDb extends Command
         $languages = Language::pluck('id', 'iso_639_1')->toArray();
         $studios = Studio::pluck('id', 'slug')->toArray();
         $lists = WorkList::pluck('id', 'slug')->toArray();
+        $castMembers = CastMember::pluck('id', 'slug')->toArray();
+        $castRoles = CastRole::pluck('id', 'slug')->toArray();
 
         $this->withProgressBar(DB::connection('old')->table('film')->select('*')->get(),
-            function ($record) use ($lists, $studios, $workTypes, $authors, $externalReferenceTypes, $languages) {
+            function ($record) use ($castMembers, $castRoles, $lists, $studios, $workTypes, $authors, $externalReferenceTypes, $languages) {
                 // Manages years in the form "YYYY - YYYY"
                 if (count(explode(' - ', $record->anno)) == 2) {
                     list($record->anno, $record->{'anno-fine'}) = explode(' - ', $record->anno);
@@ -332,19 +389,43 @@ class ImportOldDb extends Command
                     ]);
                     $newEpisode->save();
 
-                    if(trim($episode->titolo)) {
+                    if (trim($episode->titolo)) {
                         $newEpisode->work_episode_titles()->create([
                             'title'       => $episode->titolo,
                             'language_id' => $languages['it'],
                         ]);
                     }
 
-                    if(trim($episode->titolo_en)) {
+                    if (trim($episode->titolo_en)) {
                         $newEpisode->work_episode_titles()->create([
                             'title'       => $episode->titolo_en,
                             'language_id' => $languages['en'],
                         ]);
                     }
+                });
+
+                DB::connection('old')->table('a_film_persone')->select('*')->where('id_film', '=', $work->slug)->get()->each(function ($cast_lnk) use ($castRoles, $castMembers, $work) {
+                    if (!isset($castMembers[$cast_lnk->id_persona])) {
+                        $exploded = preg_split('/(?=[A-Z])/', $cast_lnk->id_persona);
+                        $newMember = new CastMember([
+                            'name'     => count($exploded) > 2 ? $exploded[1] : null,
+                            'surname'  => count($exploded) > 2 ? implode(' ', array_slice($exploded, 2)) : null,
+                            'pen_name' => count($exploded) == 2 ? $exploded[1] : null,
+                        ]);
+                        $newMember->save();
+                        $castMembers[$cast_lnk->id_persona] = $newMember->id;
+                    }
+
+                    if(!isset($castRoles[$cast_lnk->ruolo])) {
+                        return;
+                    }
+
+                    (new WorkCastMembership([
+                        'work_id'         => $work->id,
+                        'cast_member_id'  => $castMembers[$cast_lnk->id_persona],
+                        'cast_role_id'    => $castRoles[$cast_lnk->ruolo],
+                        'work_episode_id' => $cast_lnk->episodio ? (WorkEpisode::where('work_id', $work->id)->where('number', $cast_lnk->episodio)->first()->id ?? null) : null,
+                    ]))->save();
                 });
             });
         $this->line('');
@@ -352,6 +433,6 @@ class ImportOldDb extends Command
 
     private static function isTrue(mixed $value): bool
     {
-        return (!!$value or Str::lower($value) == 'true');
+        return ($value or $value == 1 or Str::lower($value) == 'true');
     }
 }

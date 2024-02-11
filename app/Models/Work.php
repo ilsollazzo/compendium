@@ -63,6 +63,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read \App\Models\WorkType|null $work_type
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkList> $work_lists
  * @property-read int|null $work_lists_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkCastMembership> $cast_members
+ * @property-read int|null $cast_members_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkEpisode> $episodes
+ * @property-read int|null $episodes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkCastMembership> $cast_memberships
+ * @property-read int|null $cast_memberships_count
  * @mixin \Eloquent
  */
 class Work extends Model
@@ -101,5 +107,15 @@ class Work extends Model
     public function work_lists(): BelongsToMany
     {
         return $this->belongsToMany(WorkList::class, 'lnk_works_work_lists');
+    }
+
+    public function episodes(): HasMany
+    {
+        return $this->hasMany(WorkEpisode::class);
+    }
+
+    public function cast_memberships(): HasMany
+    {
+        return $this->hasMany(WorkCastMembership::class);
     }
 }
