@@ -8,6 +8,7 @@ use App\Models\WorkDescription;
 use App\Models\ExternalReferenceType;
 use App\Models\Language;
 use App\Models\Work;
+use App\Models\WorkEpisode;
 use App\Models\WorkList;
 use App\Models\WorkListDetail;
 use App\Models\WorkType;
@@ -321,6 +322,28 @@ class ImportOldDb extends Command
                 DB::connection('old')->table('a_film_liste')->select('*')->where('id_film', '=', $work->slug)->get()->each(function ($list) use ($work, $lists) {
                     if (isset($lists[$list->id_lista])) {
                         $work->work_lists()->attach($lists[$list->id_lista], ((int)$list->ordine or (int)$list->ordine === 0) ? ['order' => (int)$list->ordine] : []);
+                    }
+                });
+
+                DB::connection('old')->table('episodi')->select('*')->where('id_film', '=', $work->slug)->get()->each(function ($episode) use ($languages, $work) {
+                    $newEpisode = new WorkEpisode([
+                        'work_id' => $work->id,
+                        'number'  => $episode->episodio,
+                    ]);
+                    $newEpisode->save();
+
+                    if(trim($episode->titolo)) {
+                        $newEpisode->work_episode_titles()->create([
+                            'title'       => $episode->titolo,
+                            'language_id' => $languages['it'],
+                        ]);
+                    }
+
+                    if(trim($episode->titolo_en)) {
+                        $newEpisode->work_episode_titles()->create([
+                            'title'       => $episode->titolo_en,
+                            'language_id' => $languages['en'],
+                        ]);
                     }
                 });
             });
