@@ -18,7 +18,8 @@ class WorkDescriptionPartResource extends JsonResource
          * @var \App\Models\WorkDescriptionPart $this
          */
         return [
-            'title' => $this->title,
+            'image'   => route('works.descriptions.parts.image', [$this->work_description->work->slug, $this->work_description, $this]),
+            'title'   => $this->title,
             'content' => $this->content,
         ];
     }

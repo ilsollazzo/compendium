@@ -363,10 +363,12 @@ class ImportOldDb extends Command
                     $description->save();
 
                     $descriptionParts = explode("<h2", $record->descrizione);
-                    foreach ($descriptionParts as $key => $part) {
+                    $counter = 0;
+                    foreach ($descriptionParts as $part) {
                         if (trim($part) == '') {
                             continue;
                         }
+                        $counter++;
 
                         $part = '<h2' . $part;
                         $title = Str::between($part, '<h2>', '</h2>');
@@ -374,7 +376,7 @@ class ImportOldDb extends Command
                         $content = preg_replace("/<img[^>]+>/i", "", $content);
                         $content = preg_replace("/\sitemprop=[\"']description[\"']/i", "", $content);
                         $description->description_parts()->create([
-                            'part_no' => $key + 1,
+                            'part_no' => $counter,
                             'title'   => trim($title),
                             'content' => trim($content),
                         ]);

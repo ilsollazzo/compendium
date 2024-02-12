@@ -56,6 +56,12 @@ return [
             'throw' => false,
         ],
 
+        'works_posters' => [
+            'driver' => 'local',
+            'root' => storage_path('app/works/posters'),
+            'throw' => false,
+        ],
+
         'works_thumbnails' => [
             'driver' => 'local',
             'root' => storage_path('app/works/thumbnails'),
