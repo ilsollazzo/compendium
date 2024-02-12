@@ -53,8 +53,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $date
  * @property int|null $end_year
  * @property int|null $end_date
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkDescription> $work_descriptions
- * @property-read int|null $work_descriptions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkDescription> $descriptions
+ * @property-read int|null $descriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Studio> $studios
  * @property-read int|null $studios_count
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereDate($value)
@@ -91,7 +91,7 @@ class Work extends Model
         return $this->hasMany(WorkTitle::class);
     }
 
-    public function work_descriptions(): HasMany
+    public function descriptions(): HasMany
     {
         return $this->hasMany(WorkDescription::class);
     }

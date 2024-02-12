@@ -19,7 +19,7 @@ class WorkDescriptionResource extends JsonResource
          */
         return [
             'language' => $this->language->iso_639_1,
-            'parts'    => WorkDescriptionPartResource::collection($this->work_description_parts),
+            'parts'    => WorkDescriptionPartResource::collection($this->description_parts),
             'authors'  => WorkDescriptionAuthorResource::collection($this->authors),
             'is_ready' => $this->is_ready
         ];

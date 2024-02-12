@@ -373,7 +373,7 @@ class ImportOldDb extends Command
                         $content = Str::after($part, '</h2>');
                         $content = preg_replace("/<img[^>]+>/i", "", $content);
                         $content = preg_replace("/\sitemprop=[\"']description[\"']/i", "", $content);
-                        $description->work_description_parts()->create([
+                        $description->description_parts()->create([
                             'part_no' => $key + 1,
                             'title'   => trim($title),
                             'content' => trim($content),

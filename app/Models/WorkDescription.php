@@ -31,8 +31,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|WorkDescription whereWorkId($value)
  * @property int $is_ready
  * @method static \Illuminate\Database\Eloquent\Builder|WorkDescription whereIsReady($value)
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkDescriptionPart> $work_description_parts
- * @property-read int|null $work_description_parts_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkDescriptionPart> $description_parts
+ * @property-read int|null $description_parts_count
  * @mixin \Eloquent
  */
 class WorkDescription extends Model
@@ -49,7 +49,7 @@ class WorkDescription extends Model
         return $this->belongsTo(Language::class);
     }
 
-    public function work_description_parts(): HasMany
+    public function description_parts(): HasMany
     {
         return $this->hasMany(WorkDescriptionPart::class)->orderBy('part_no');
     }
