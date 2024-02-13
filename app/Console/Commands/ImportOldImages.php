@@ -38,13 +38,13 @@ class ImportOldImages extends Command
             if (!$this->option('skip-thumbnails')) {
                 $this->importThumbnail($work);
             }
-            if (!$this->option('skip-titles') and $work->has('descriptions')) {
+            if (!$this->option('skip-titles') and $work->descriptions->count()) {
                 $this->importTitle($work);
             }
-            if (!$this->option('skip-body-images') and $work->has('descriptions')) {
+            if (!$this->option('skip-body-images') and $work->descriptions->count()) {
                 $this->importBodyImages($work);
             }
-            if (!$this->option('skip-posters') and $work->has('descriptions')) {
+            if (!$this->option('skip-posters') and $work->descriptions->count()) {
                 $this->importPosters($work);
             }
         });
