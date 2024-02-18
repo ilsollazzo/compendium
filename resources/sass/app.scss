@@ -7,7 +7,15 @@
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
 
-body {
+body,.content-wrapper {
     background-image: url("../../public/imgs/sfondo.png");
     background-repeat: repeat;
+}
+
+.content-header {
+    color: $white;
+}
+
+.adminlte-logo {
+    max-width: 100%;
 }

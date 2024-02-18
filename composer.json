@@ -7,15 +7,16 @@
     "require": {
         "php": "^8.1",
         "ext-gd": "*",
-        "ext-imagick": "*",
         "ext-mbstring": "*",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^3.3",
         "intervention/image-laravel": "^1.0",
+        "jeroennoten/laravel-adminlte": "^3.9",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "laravel/ui": "^4.4"
+        "laravel/ui": "^4.4",
+        "livewire/livewire": "^3.4"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.13",
