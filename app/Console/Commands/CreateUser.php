@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 
 class CreateUser extends Command
 {
@@ -27,11 +26,11 @@ class CreateUser extends Command
      */
     public function handle()
     {
-        $name = $this->ask('Name:');
-        $email = $this->ask('Email:');
-        $password = $this->secret('Password:');
+        $name = $this->ask('Name');
+        $email = $this->ask('Email');
+        $password = $this->secret('Password');
 
-        (new User(['name' => $name, 'email' => $email, 'password' => Str::password($password)]))->save();
+        (new User(['name' => $name, 'email' => $email, 'password' => bcrypt($password)]))->save();
 
         $this->line("User created.");
     }
