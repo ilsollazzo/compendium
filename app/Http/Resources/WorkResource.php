@@ -20,10 +20,10 @@ class WorkResource extends JsonResource
          */
         return [
             'url'                 => route('api.works.show', $this->slug),
-            'thumbnail'           => $this->when(Storage::disk('works_thumbnails')->exists("{$this->id}.webp"), route('work.thumbnail', $this->slug)),
-            'title_card'          => $this->when(Storage::disk('works_titles')->exists("{$this->id}.webp"), route('work.title', $this->slug)),
-            'footer_card'         => $this->when(Storage::disk('works_footers')->exists("{$this->id}.webp"), route('work.footer', $this->slug)),
-            'poster'              => $this->when(Storage::disk('works_posters')->exists("{$this->id}.webp"), route('work.poster', $this->slug)),
+            'thumbnail'           => $this->when(Storage::disk('works_thumbnails')->exists("{$this->id}.webp"), route('works.thumbnail', $this->slug)),
+            'title_card'          => $this->when(Storage::disk('works_titles')->exists("{$this->id}.webp"), route('works.title', $this->slug)),
+            'footer_card'         => $this->when(Storage::disk('works_footers')->exists("{$this->id}.webp"), route('works.footer', $this->slug)),
+            'poster'              => $this->when(Storage::disk('works_posters')->exists("{$this->id}.webp"), route('works.poster', $this->slug)),
             'titles'              => WorkTitleResource::collection($this->titles),
             'date'                => [
                 'year' => $this->year,

@@ -29,7 +29,7 @@ Route::get('/', fn() => redirect('/'));
  */
 Route::get('/works', function () {
     return WorkResource::collection(Work::paginate());
-})->name('api.work.index');
+})->name('api.works.index');
 Route::get('/works/{slug}', function (string $slug) {
     return new WorkResource(Work::where('slug', $slug)->with(['studios', 'descriptions', 'work_lists', 'external_references', 'episodes', 'cast_memberships'])->firstOrFail());
 })->name('api.works.show');
@@ -39,7 +39,7 @@ Route::get('/works/{slug}', function (string $slug) {
  */
 Route::get('/lists', function () {
     return WorkListResource::collection(Work::paginate());
-})->name('api.list.index');
+})->name('api.lists.index');
 Route::get('/lists/{slug}', function (string $slug) {
     return new WorkListResource(WorkList::where('slug', $slug)->with('works')->firstOrFail());
-})->name('api.list.show');
+})->name('api.lists.show');

@@ -35,7 +35,7 @@ Route::get('/works/{slug}/thumbnail.webp', function (string $slug) {
     } else {
         abort(404);
     }
-})->name('work.thumbnail');
+})->name('works.thumbnail');
 
 Route::get('/works/{slug}/title.webp', function (string $slug) {
     $work = Work::firstWhere('slug', '=', $slug);
@@ -49,7 +49,7 @@ Route::get('/works/{slug}/title.webp', function (string $slug) {
     } else {
         abort(404);
     }
-})->name('work.title');
+})->name('works.title');
 
 Route::get('/works/{slug}/footer.webp', function (string $slug) {
     $work = Work::firstWhere('slug', '=', $slug);
@@ -63,7 +63,7 @@ Route::get('/works/{slug}/footer.webp', function (string $slug) {
     } else {
         abort(404);
     }
-})->name('work.footer');
+})->name('works.footer');
 
 Route::get('/works/{slug}/poster.webp', function (string $slug) {
     $work = Work::firstWhere('slug', '=', $slug);
@@ -77,7 +77,7 @@ Route::get('/works/{slug}/poster.webp', function (string $slug) {
     } else {
         abort(404);
     }
-})->name('work.poster');
+})->name('works.poster');
 
 Route::get('/works/{slug}/descriptions/{work_description}/parts/{work_description_part}/image.webp', function (string $slug, WorkDescription $workDescription, WorkDescriptionPart $workDescriptionPart) {
     if (Storage::disk('works_description_parts')->exists("{$workDescriptionPart->id}.webp")) {
