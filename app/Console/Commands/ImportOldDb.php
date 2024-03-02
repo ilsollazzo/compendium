@@ -301,7 +301,7 @@ class ImportOldDb extends Command
                     'date'              => $record->data ?? null,
                     'end_year'          => $record->{'anno-fine'} ?: null,
                     'contains_episodes' => self::isTrue($record->episodi),
-                    'length'            => $record->durata,
+                    'length'            => is_numeric($record->durata) ? $record->durata : null,
                     'is_accessible'     => self::isTrue($record->pervenuto),
                     'is_available'      => self::isTrue($record->disponibile),
                     'is_lost'           => $record->disponibile == 'lost',
