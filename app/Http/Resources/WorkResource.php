@@ -33,7 +33,7 @@ class WorkResource extends JsonResource
                 'year' => $this->end_year,
                 'day'  => $this->end_date,
             ]),
-            'duration'            => $this->duration,
+            'length'              => $this->length,
             'descriptions'        => WorkDescriptionResource::collection($this->whenLoaded('descriptions')),
             'studios'             => StudioResource::collection($this->whenLoaded('studios')),
             'contains_episodes'   => $this->contains_episodes,

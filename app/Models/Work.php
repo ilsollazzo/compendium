@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $work_type_id
  * @property string $slug
  * @property int $year
- * @property int|null $duration
+ * @property int|null $length
  * @property string|null $description
  * @property int $author_id
  * @property int $contains_episodes
@@ -28,7 +28,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereAuthorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereContainsEpisodes($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Work whereDuration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Work whereLength($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereIsAccessible($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Work whereIsAvailable($value)
@@ -41,7 +41,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read \App\Models\WorkDescriptionAuthor $author
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ExternalReference> $external_references
  * @property-read int|null $external_references_count
- * @property-read \App\Models\WorkType $workType
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkDescriptionAuthor> $description_authors
