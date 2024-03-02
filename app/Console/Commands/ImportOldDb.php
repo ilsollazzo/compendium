@@ -264,6 +264,10 @@ class ImportOldDb extends Command
 
         $this->withProgressBar(DB::connection('old')->table('film')->select('*')->get(),
             function ($record) use ($castMembers, $castRoles, $lists, $studios, $workTypes, $authors, $externalReferenceTypes, $languages) {
+                // Skips empty titles
+                if (!trim($record->titolo)) {
+                    return;
+                }
                 // Manages years in the form "YYYY - YYYY"
                 if (count(explode(' - ', $record->anno)) == 2) {
                     list($record->anno, $record->{'anno-fine'}) = explode(' - ', $record->anno);
