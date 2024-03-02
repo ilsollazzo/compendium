@@ -23,8 +23,8 @@ Route::get('/', function () {
 });
 
 # Works
-Route::get('/works/{slug}/thumbnail.webp', function (string $slug) {
-    $work = Work::firstWhere('slug', '=', $slug);
+Route::get('/works/{slug}/thumbnail.webp', function (string|int $slug) {
+    $work = is_numeric($slug) ? Work::find($slug) : Work::firstWhere('slug', '=', $slug);
     if ($work and Storage::disk('works_thumbnails')->exists("{$work->id}.webp")) {
         $file = Storage::disk('works_thumbnails')->get("{$work->id}.webp");
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Dashboard;
+use App\Livewire\Admin\Works\IndexWorks;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -11,3 +12,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [Dashboard::class, 'index'])->name('admin');
 
+Route::get('/works', IndexWorks::class)->name('admin.works.index');

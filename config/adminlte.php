@@ -305,8 +305,8 @@ return [
             'submenu' => [
                 [
                     'text' => 'Lista',
-                    'icon'        => 'fas fa-fw fa-list',
-                    'url'  => '#',
+                    'icon' => 'fas fa-fw fa-list',
+                    'route'  => 'admin.works.index',
                 ],
 
                 [
